@@ -130,45 +130,32 @@ if selected == 'Parkinson’s Prediction':
             st.error("✅ The person **does not have Parkinson’s disease**.")
         else:
             st.success("🚨 The person **has Parkinson’s disease**.")
-            
-                
-# AI Image Analyzer (Image + Text)
+
+# AI Image Analyzer
 if selected == 'AI Image Analyzer':
-    st.title("🖼️ AI Image Analyzer")
-    st.markdown("Upload a medical image and describe the symptoms. The AI will analyze both and provide a diagnosis-oriented response.")
+    st.title("🖼️  AI Image Analyzer")
+    st.markdown("Upload a medical image and describe the issue. Our AI will assist with analysis.")
 
-    uploaded_image = st.file_uploader("📤 Upload a Medical Image", type=["jpg", "jpeg", "png"])
-    symptom_description = st.text_area("📝 Describe the patient's symptoms or your concern")
+    # Step 1: Upload + Text Input
+    uploaded_image = st.file_uploader("📷 Upload a medical image (X-ray, scan, etc.)", type=["jpg", "jpeg", "png"])
+    symptom_description = st.text_area("📝 Describe the patient's symptoms")
 
+    # Step 2: Check and Show Image Safely
     if uploaded_image and symptom_description:
-        st.image(uploaded_image, caption="Uploaded Image", use_container_width=True)
+        try:
+            from PIL import Image
+            image = Image.open(uploaded_image)  # Safely open the image
+            st.image(image, caption="Uploaded Image", use_container_width=True)
 
-        with st.spinner("Analyzing image and context... 🤖"):
+            # Step 3: Send to Gemini with multimodal input
+            with st.spinner("Analyzing image and context... 🤖"):
+                prompt = f"Analyze this medical image and give diagnosis/help based on this symptom description: {symptom_description}"
+                gemini_response = model.generate_content([prompt, image])
+                st.success("🧠 AI Medical Insight:")
+                st.write(gemini_response.text)
 
-            try:
-                from PIL import Image
-                import io
-
-                image = Image.open(uploaded_image).convert('RGB')
-
-                # Send multimodal input to Gemini
-                response = model.generate_content([
-                    symptom_description,
-                    image
-                ])
-
-                st.success("**AI Medical Insight:**")
-                st.write(response.text)
-
-            except Exception as e:
-                st.error(f"Error during analysis: {e}")
-
-    elif uploaded_image and not symptom_description:
-        st.info("✍️ Please describe the symptoms or issue for better analysis.")
-    elif symptom_description and not uploaded_image:
-        st.info("📸 Please upload an image to analyze.")
-
-
+        except Exception as e:
+            st.error(f"Image analysis failed: {e}")
 
 # Medical Chatbot
 if selected == 'AI Medical Chatbot':
