@@ -29,13 +29,13 @@ def get_chatbot_response(prompt):
 # Sidebar menu
 with st.sidebar:
     
-      # 👨‍⚕️ Doctor icon
     selected = option_menu(
-        'AI MEDICAL ASSISTANT',
-        ['Diabetes Prediction', 'Heart Disease Prediction', 'Parkinson’s Prediction', 'AI Medical Chatbot'],
-        icons=['activity', 'heart', 'person', 'robot'],
-        default_index=0
-    )
+    'AI MEDICAL ASSISTANT',
+    ['Diabetes Prediction', 'Heart Disease Prediction', 'Parkinson’s Prediction', 'AI Medical Chatbot', 'AI Image Analyzer'],
+    icons=['activity', 'heart', 'person', 'robot', 'image'],
+    default_index=0
+)
+
     st.image("https://cdn-icons-png.flaticon.com/512/3774/3774299.png", width=200)
 
 # Diabetes
@@ -130,6 +130,45 @@ if selected == 'Parkinson’s Prediction':
             st.error("✅ The person **does not have Parkinson’s disease**.")
         else:
             st.success("🚨 The person **has Parkinson’s disease**.")
+            
+                
+# AI Image Analyzer (Image + Text)
+if selected == 'AI Image Analyzer':
+    st.title("🖼️ AI Image Analyzer")
+    st.markdown("Upload a medical image and describe the symptoms. The AI will analyze both and provide a diagnosis-oriented response.")
+
+    uploaded_image = st.file_uploader("📤 Upload a Medical Image", type=["jpg", "jpeg", "png"])
+    symptom_description = st.text_area("📝 Describe the patient's symptoms or your concern")
+
+    if uploaded_image and symptom_description:
+        st.image(uploaded_image, caption="Uploaded Image", use_container_width=True)
+
+        with st.spinner("Analyzing image and context... 🤖"):
+
+            try:
+                from PIL import Image
+                import io
+
+                image = Image.open(uploaded_image).convert('RGB')
+
+                # Send multimodal input to Gemini
+                response = model.generate_content([
+                    symptom_description,
+                    image
+                ])
+
+                st.success("**AI Medical Insight:**")
+                st.write(response.text)
+
+            except Exception as e:
+                st.error(f"Error during analysis: {e}")
+
+    elif uploaded_image and not symptom_description:
+        st.info("✍️ Please describe the symptoms or issue for better analysis.")
+    elif symptom_description and not uploaded_image:
+        st.info("📸 Please upload an image to analyze.")
+
+
 
 # Medical Chatbot
 if selected == 'AI Medical Chatbot':
