@@ -145,7 +145,8 @@ if selected == 'AI Image Analyzer':
         try:
             from PIL import Image
             image = Image.open(uploaded_image)  # Safely open the image
-            st.image(image, caption="Uploaded Image", use_container_width=True)
+            st.image(image, caption="Uploaded Image")  # <- Removed use_container_width
+
 
             # Step 3: Send to Gemini with multimodal input
             with st.spinner("Analyzing image and context... 🤖"):
