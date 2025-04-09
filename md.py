@@ -139,7 +139,7 @@ if selected == 'AI Image Analyzer':
     symptom_description = st.text_area("📝 Describe the patient's symptoms or your concern")
 
     if uploaded_image and symptom_description:
-        st.image(uploaded_image, caption="Uploaded Image", use_container_width=True)
+        st.image(uploaded_image, caption="Uploaded Image")
 
         with st.spinner("Analyzing image and context... 🤖"):
 
