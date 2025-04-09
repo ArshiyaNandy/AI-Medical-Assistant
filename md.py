@@ -30,7 +30,7 @@ def get_chatbot_response(prompt):
 with st.sidebar:
     selected = option_menu(
     'AI MEDICAL ASSISTANT',
-    ['Diabetes Prediction', 'Heart Disease Prediction', 'Parkinson’s Prediction', 'AI Medical Chatbot', 'AI Image Analyzer', 'PDF Report Summarizer'],
+    ['AI Medical Chatbot', 'AI Image Analyzer', 'PDF Report Summarizer','Diabetes Prediction', 'Heart Disease Prediction', 'Parkinson’s Prediction'],
     icons=['robot', 'image', 'file-earmark-text','activity', 'heart', 'person'],
     default_index=0
 )
