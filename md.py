@@ -11,7 +11,7 @@ parkinsons_model = pickle.load(open('parkinsons_model.sav', 'rb'))
 
 import base64
 
-def set_background(image_file="/mnt/data/bg.jpg"):
+def set_background(image_file="bg.jpg"):
     with open(image_file, "rb") as image:
         encoded = base64.b64encode(image.read()).decode()
     st.markdown(
