@@ -28,14 +28,12 @@ def get_chatbot_response(prompt):
 
 # Sidebar menu
 with st.sidebar:
-    
     selected = option_menu(
     'AI MEDICAL ASSISTANT',
-    ['Diabetes Prediction', 'Heart Disease Prediction', 'Parkinson’s Prediction', 'AI Medical Chatbot', 'AI Image Analyzer'],
-    icons=['activity', 'heart', 'person', 'robot', 'image'],
+    ['Diabetes Prediction', 'Heart Disease Prediction', 'Parkinson’s Prediction', 'AI Medical Chatbot', 'AI Image Analyzer', 'PDF Report Summarizer'],
+    icons=['activity', 'heart', 'person', 'robot', 'image', 'file-earmark-text'],
     default_index=0
 )
-
     st.image("https://cdn-icons-png.flaticon.com/512/3774/3774299.png", width=200)
 
 # Diabetes
@@ -130,33 +128,45 @@ if selected == 'Parkinson’s Prediction':
             st.error("✅ The person **does not have Parkinson’s disease**.")
         else:
             st.success("🚨 The person **has Parkinson’s disease**.")
-
-# AI Image Analyzer
+            
+                
+# AI Image Analyzer (Image + Text)
 if selected == 'AI Image Analyzer':
-    st.title("🖼️  AI Image Analyzer")
-    st.markdown("Upload a medical image and describe the issue. Our AI will assist with analysis.")
+    st.title("🖼️ AI Image Analyzer")
+    st.markdown("Upload a medical image and describe the symptoms. The AI will analyze both and provide a diagnosis-oriented response.")
 
-    # Step 1: Upload + Text Input
-    uploaded_image = st.file_uploader("📷 Upload a medical image (X-ray, scan, etc.)", type=["jpg", "jpeg", "png"])
-    symptom_description = st.text_area("📝 Describe the patient's symptoms")
+    uploaded_image = st.file_uploader("📤 Upload a Medical Image", type=["jpg", "jpeg", "png"])
+    symptom_description = st.text_area("📝 Describe the patient's symptoms or your concern")
 
-    # Step 2: Check and Show Image Safely
     if uploaded_image and symptom_description:
-        try:
-            from PIL import Image
-            image = Image.open(uploaded_image)  # Safely open the image
-            st.image(image, caption="Uploaded Image")  # <- Removed use_container_width
+        st.image(uploaded_image, caption="Uploaded Image", use_container_width=True)
+
+        with st.spinner("Analyzing image and context... 🤖"):
+
+            try:
+                from PIL import Image
+                import io
+
+                image = Image.open(uploaded_image).convert('RGB')
+
+                # Send multimodal input to Gemini
+                response = model.generate_content([
+                    symptom_description,
+                    image
+                ])
+
+                st.success("**AI Medical Insight:**")
+                st.write(response.text)
+
+            except Exception as e:
+                st.error(f"Error during analysis: {e}")
+
+    elif uploaded_image and not symptom_description:
+        st.info("✍️ Please describe the symptoms or issue for better analysis.")
+    elif symptom_description and not uploaded_image:
+        st.info("📸 Please upload an image to analyze.")
 
 
-            # Step 3: Send to Gemini with multimodal input
-            with st.spinner("Analyzing image and context... 🤖"):
-                prompt = f"Analyze this medical image and give diagnosis/help based on this symptom description: {symptom_description}"
-                gemini_response = model.generate_content([prompt, image])
-                st.success("🧠 AI Medical Insight:")
-                st.write(gemini_response.text)
-
-        except Exception as e:
-            st.error(f"Image analysis failed: {e}")
 
 # Medical Chatbot
 if selected == 'AI Medical Chatbot':
@@ -170,6 +180,39 @@ if selected == 'AI Medical Chatbot':
             reply = get_chatbot_response(user_input)
         st.success("**AI Assistant:**")
         st.write(reply)
+
+# PDF Report Summarizer
+if selected == 'PDF Report Summarizer':
+    st.title("📄 PDF Medical Report Summarizer")
+    st.markdown("Upload a medical report in PDF format. The AI will extract and summarize key insights.")
+
+    uploaded_pdf = st.file_uploader("📤 Upload PDF Report", type=["pdf"])
+
+    if uploaded_pdf:
+        import fitz  # PyMuPDF
+        from transformers import pipeline
+
+        try:
+            # Extract text from PDF
+            with fitz.open(stream=uploaded_pdf.read(), filetype="pdf") as doc:
+                text = ""
+                for page in doc:
+                    text += page.get_text()
+
+            st.info("📑 **Extracted Text:**")
+            st.write(text[:1000] + "...")  # Show first 1000 characters
+
+            # Summarization
+            with st.spinner("Summarizing report... 🧠"):
+                summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+                summary = summarizer(text, max_length=300, min_length=30, do_sample=False)
+
+            st.success("📝 **Summary:**")
+            st.write(summary[0]['summary_text'])
+
+        except Exception as e:
+            st.error(f"Error: {e}")
+
 
 st.markdown(
     """
