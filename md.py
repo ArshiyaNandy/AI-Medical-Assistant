@@ -9,46 +9,6 @@ diabetes_model = pickle.load(open('diabetes_model.sav', 'rb'))
 heart_model = pickle.load(open('heart_model.sav', 'rb'))
 parkinsons_model = pickle.load(open('parkinsons_model.sav', 'rb'))
 
-import base64
-
-def set_background(image_file="bg.jpg"):
-    with open(image_file, "rb") as image:
-        encoded = base64.b64encode(image.read()).decode()
-
-    st.markdown(
-        f"""
-        <style>
-        html, body, [class*="stApp"] {{
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background-image: url("data:image/jpg;base64,{encoded}");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            animation: fadeIn 2s ease-in-out;
-        }}
-
-        /* Override default Streamlit container max-width */
-        .main {{
-            max-width: 100% !important;
-            padding-left: 0rem;
-            padding-right: 0rem;
-        }}
-
-        @keyframes fadeIn {{
-            from {{ opacity: 0; }}
-            to {{ opacity: 1; }}
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-set_background()
-
 # Initialize Gemini
 import google.generativeai as genai
 
