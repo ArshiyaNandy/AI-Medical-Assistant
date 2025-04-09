@@ -232,3 +232,20 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url("https://images.unsplash.com/photo-1588776814546-ec7e909ab56b");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
