@@ -19,7 +19,7 @@ def set_background(image_file="bg.jpg"):
         <style>
         .stApp {{
             background-image: url("data:image/jpg;base64,{encoded}");
-            background-size: cover;
+            background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
