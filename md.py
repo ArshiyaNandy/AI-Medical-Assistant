@@ -31,7 +31,7 @@ with st.sidebar:
     selected = option_menu(
     'AI MEDICAL ASSISTANT',
     ['Diabetes Prediction', 'Heart Disease Prediction', 'Parkinson’s Prediction', 'AI Medical Chatbot', 'AI Image Analyzer', 'PDF Report Summarizer'],
-    icons=['activity', 'heart', 'person', 'robot', 'image', 'file-earmark-text'],
+    icons=['robot', 'image', 'file-earmark-text','activity', 'heart', 'person'],
     default_index=0
 )
     st.image("https://cdn-icons-png.flaticon.com/512/3774/3774299.png", width=200)
