@@ -9,6 +9,34 @@ diabetes_model = pickle.load(open('diabetes_model.sav', 'rb'))
 heart_model = pickle.load(open('heart_model.sav', 'rb'))
 parkinsons_model = pickle.load(open('parkinsons_model.sav', 'rb'))
 
+import base64
+
+def set_background(image_file="/mnt/data/bg.jpg"):
+    with open(image_file, "rb") as image:
+        encoded = base64.b64encode(image.read()).decode()
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/jpg;base64,{encoded}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            animation: fadeIn 2s ease-in-out;
+        }}
+        @keyframes fadeIn {{
+            0% {{ opacity: 0; }}
+            100% {{ opacity: 1; }}
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Call the function at the beginning of your Streamlit app
+set_background()
+
 # Initialize Gemini
 import google.generativeai as genai
 
@@ -234,21 +262,4 @@ st.markdown(
 )
 
 
-import streamlit as st
-
-# Set background image using custom CSS
-st.markdown(
-    f"""
-    <style>
-    .stApp {{
-        background-image: url("bg.jpg");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
