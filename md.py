@@ -234,11 +234,14 @@ st.markdown(
 )
 
 
+import streamlit as st
+
+# Set background image using custom CSS
 st.markdown(
     f"""
     <style>
     .stApp {{
-        background-image: url("https://images.unsplash.com/photo-1588776814546-ec7e909ab56b");
+        background-image: url("bg.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
